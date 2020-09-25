@@ -9,17 +9,18 @@ import Person from './Person/Person';
  * the function when the react render the DOM. You can see at react documentation which events are supported
  * ---
  * 44. Using useState() in hooks, the state isn't merge when you call the set method.
+ * ---
+ * 54. You can use a clean way to use conditions for dynamic content
  */
 const app = props => {
 
-    const [persons, setPersons] = useState({
-        persons: [
-            {name: 'Nuno', age: 28},
-            {name: 'Ines', age: 29},
-            {name: 'Sara', age: 26}
-        ],
-        otherState: "some other value"
-    });
+    const [persons, setPersons] = useState([
+        {id: 1, name: 'Nuno', age: 28},
+        {id: 2, name: 'Ines', age: 29},
+        {id: 3, name: 'Sara', age: 26}
+    ]);
+
+    const [showPersons, setShowPersons] = useState(false)
 
     const [other, setOther] = useState("some other value")
 
@@ -27,26 +28,41 @@ const app = props => {
      * 46. A why to passing method references between components
      * Using the switchNameHandler(name) can not be efficient
      */
-    const switchNameHandler = (newName) => {
+    const switchNameHandler = (event, id) => {
         //console.log("Was clicked!");
         // DON'T DO THIS: persons.persons[0].name = "Maximilian";
-        setPersons({
+        /*setPersons({
             persons: [
-                {name: newName, age: 28},
-                {name: 'Ines', age: 29},
-                {name: 'Sara', age: 27}
+                {id: 1, name: newName, age: 28},
+                {id: 2, name: 'Ines', age: 29},
+                {id: 3, name: 'Sara', age: 27}
             ]
-        });
+        });*/
+
+        //This will mutable the reference of persons[index]
+        const personIndex = persons.findIndex(p => p.id === id);
+        const personAux = {
+            ...persons[personIndex]
+        }
+        personAux.name = event.target.value;
+
+        const personsAux = [...persons];
+        personsAux[personIndex] = personAux;
+        setPersons(personsAux);
+
     };
 
-    const nameChangedHandler = (event) => {
-        setPersons({
-            persons: [
-                {name: 'Max', age: 28},
-                {name: event.target.value, age: 29},
-                {name: 'Sara', age: 27}
-            ]
-        });
+    const deletePersonHandler = (personIndex) => {
+        //58. Copy the object instead of using reference
+        //const personsAux = persons.slice();
+        const personsAux = [...persons];
+        personsAux.splice(personIndex, 1);
+        setPersons(personsAux);
+        console.log(persons);
+    }
+
+    const togglePersonHandler = () => {
+        setShowPersons(!showPersons)
     }
 
     /**
@@ -60,24 +76,35 @@ const app = props => {
         cursor: 'pointer'
     };
 
+    let personsContent = null;
+
+    // 54. Clean way to handling why dynamic content
+    if (showPersons) {
+        personsContent =
+            <div>
+                {
+                    persons.map((person, index) => {
+                        return <Person
+                            //Index not help react
+                            key={person.id}
+                            click={() => deletePersonHandler(index)}
+                            name={person.name}
+                            age={person.age}
+                            changed={(event) => switchNameHandler(event, person.id)}/>
+                    })
+                }
+            </div>
+    }
+
     return (
         <div className="App">
             <h1>Hi, I'm a react app</h1>
             <p>This is really working!</p>
             <button
                 style={style}
-                onClick={() => switchNameHandler("Maximiliam")}>Swith Name</button>
-            <Person
-                name={persons.persons[0].name}
-                age={persons.persons[0].age}/>
-            <Person
-                name={persons.persons[1].name}
-                age={persons.persons[1].age}
-                click={switchNameHandler.bind(this, "Maximiliam")}
-                changed={nameChangedHandler}>My Hobbies: Racing</Person>
-            <Person
-                name={persons.persons[2].name}
-                age={persons.persons[2].age}/>
+                onClick={togglePersonHandler}>Toggle Persons
+            </button>
+            {personsContent}
         </div>
         //This is javascript (JSX), not html.
         //React.createElement("div", {className: 'App'}, React.createElement("h1", null, "Hi, I\'m a React App!"))
@@ -85,25 +112,3 @@ const app = props => {
 }
 
 export default app;
-
-/*
-state = {
-    persons: [
-        {name: 'Nuno', age: 28},
-        {name: 'Ines', age: 29},
-        {name: 'Sara', age: 26}
-    ],
-    otherState: "some other value"
-}
-
-switchNameHandler = () => {
-    //console.log("Was clicked!");
-    // DON'T DO THIS: persons.persons[0].name = "Maximilian";
-    this.setState({
-        persons: [
-            {name: 'Maximilian', age: 28},
-            {name: 'Ines', age: 29},
-            {name: 'Sara', age: 27}
-        ]
-    })
-}*/
