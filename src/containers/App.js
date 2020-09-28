@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
-import Person from './Person/Person';
+import Persons from "../components/Persons/Persons";
+import Cockpit from "../components/Cockpit/Cockpit";
 
 /**
  * 38. Manage information inside component you should use state, changing state the react will rerender the DOM
@@ -65,45 +66,19 @@ const app = props => {
         setShowPersons(!showPersons)
     }
 
-    /**
-     * 49. Inline style
-     */
-    const style = {
-        backgroundColor: 'white',
-        font: 'inherit',
-        border: '1px solid blue',
-        padding: '8px',
-        cursor: 'pointer'
-    };
-
     let personsContent = null;
 
     // 54. Clean way to handling why dynamic content
     if (showPersons) {
-        personsContent =
-            <div>
-                {
-                    persons.map((person, index) => {
-                        return <Person
-                            //Index not help react
-                            key={person.id}
-                            click={() => deletePersonHandler(index)}
-                            name={person.name}
-                            age={person.age}
-                            changed={(event) => switchNameHandler(event, person.id)}/>
-                    })
-                }
-            </div>
+        personsContent = <Persons
+                persons={persons}
+                clicked={deletePersonHandler}
+                changed={switchNameHandler}/>
     }
 
     return (
         <div className="App">
-            <h1>Hi, I'm a react app</h1>
-            <p>This is really working!</p>
-            <button
-                style={style}
-                onClick={togglePersonHandler}>Toggle Persons
-            </button>
+            <Cockpit clicked={togglePersonHandler}/>
             {personsContent}
         </div>
         //This is javascript (JSX), not html.

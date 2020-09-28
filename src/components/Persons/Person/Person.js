@@ -15,7 +15,7 @@ import './Person.css';
  * ---
  */
 
-const person = (props) => {
+const Person = (props) => {
     //return <p>I'm a person and I am {Math.floor(Math.random() * 30)} old!</p>
     return (
         <div className="Person">
@@ -26,4 +26,4 @@ const person = (props) => {
     )
 };
 
-export default person;
+export default Person;
