@@ -1,7 +1,10 @@
-import React, {useState} from 'react';
+import React, {Fragment, useState} from 'react';
 import './App.css';
 import Persons from "../components/Persons/Persons";
 import Cockpit from "../components/Cockpit/Cockpit";
+import LifeCycle from "../components/LifeCycles/LifeCycle";
+import withClass from "../hoc/withClass";
+import Aux from "../hoc/Aux";
 
 /**
  * 38. Manage information inside component you should use state, changing state the react will rerender the DOM
@@ -16,7 +19,7 @@ import Cockpit from "../components/Cockpit/Cockpit";
 const app = props => {
 
     const [persons, setPersons] = useState([
-        {id: 1, name: 'Nuno', age: 28},
+        {id: 1, name: 'Nuno', age: "sd"},
         {id: 2, name: 'Ines', age: 29},
         {id: 3, name: 'Sara', age: 26}
     ]);
@@ -24,6 +27,10 @@ const app = props => {
     const [showPersons, setShowPersons] = useState(false)
 
     const [other, setOther] = useState("some other value")
+
+    const [showCockpick, setShowCockpick] = useState(true)
+
+    const [counter, setCounter] = useState(0)
 
     /**
      * 46. A why to passing method references between components
@@ -71,19 +78,30 @@ const app = props => {
     // 54. Clean way to handling why dynamic content
     if (showPersons) {
         personsContent = <Persons
-                persons={persons}
-                clicked={deletePersonHandler}
-                changed={switchNameHandler}/>
+            persons={persons}
+            clicked={deletePersonHandler}
+            changed={switchNameHandler}/>
     }
 
     return (
-        <div className="App">
-            <Cockpit clicked={togglePersonHandler}/>
+
+        <Aux>
+            <button onClick={() => {
+                setShowCockpick(!setShowCockpick)
+            }}>Remove Cockpick
+            </button>
+            {showCockpick ? <Cockpit
+                showPersons={showPersons}
+                clicked={togglePersonHandler}
+                title="Complete Guide React"/> : null}
             {personsContent}
-        </div>
+            <h1>LifeCycle Example</h1>
+            <LifeCycle title="This is a title"/>
+        </Aux>
+
         //This is javascript (JSX), not html.
         //React.createElement("div", {className: 'App'}, React.createElement("h1", null, "Hi, I\'m a React App!"))
     )
 }
 
-export default app;
+export default withClass(app, "App");

@@ -1,5 +1,8 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './Person.css';
+import Aux from "../../../hoc/Aux";
+import withClass from "../../../hoc/withClass";
+import PropTypes from "prop-types";
 
 /**
  * This is a functional component (also referred to as "presentational", "stateless")
@@ -15,15 +18,32 @@ import './Person.css';
  * ---
  */
 
-const Person = (props) => {
-    //return <p>I'm a person and I am {Math.floor(Math.random() * 30)} old!</p>
-    return (
-        <div className="Person">
-            <p onClick={props.click}>I'm {props.name} and I am {props.age} old!</p>
-            <p>{props.children}</p>
-            <input type="text" onChange={props.changed} value={props.name}/>
-        </div>
-    )
+class Person extends Component {
+
+    render() {
+
+        console.log("[Person.js] render")
+
+        //return <p>I'm a person and I am {Math.floor(Math.random() * 30)} old!</p>
+        return (
+            //You can use the Aux hoc component (high order component...advanced technique for reusing components
+            <React.Fragment>
+                <div className="Person">
+                    <p onClick={this.props.click}>I'm {this.props.name} and I am {this.props.age} old!</p>
+                    <p>{this.props.children}</p>
+                    <input type="text" onChange={this.props.changed} value={this.props.name}/>
+                </div>
+                <div> Another DIV</div>
+            </React.Fragment>
+        )
+    }
+}
+
+Person.propTypes = {
+    click: PropTypes.func,
+    name: PropTypes.string,
+    age: PropTypes.number,
+    changed: PropTypes.func
 };
 
-export default Person;
+export default withClass(Person, "Person");
