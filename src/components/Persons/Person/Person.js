@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import './Person.css';
-import Aux from "../../../hoc/Aux";
 import withClass from "../../../hoc/withClass";
 import PropTypes from "prop-types";
+import AuthContext from "../../../context/auth-context";
 
 /**
  * This is a functional component (also referred to as "presentational", "stateless")
@@ -20,6 +20,18 @@ import PropTypes from "prop-types";
 
 class Person extends Component {
 
+    constructor(props) {
+        super(props);
+        this.inputElement = React.createRef();
+    }
+
+    static contextType = AuthContext
+
+    componentDidMount() {
+        this.inputElement.current.focus();
+        console.log(this.context.authentication);
+    }
+
     render() {
 
         console.log("[Person.js] render")
@@ -28,10 +40,14 @@ class Person extends Component {
         return (
             //You can use the Aux hoc component (high order component...advanced technique for reusing components
             <React.Fragment>
+                {this.context.authentication ? <p>Autenthicated!</p> : <p>Please log in</p>}
                 <div className="Person">
                     <p onClick={this.props.click}>I'm {this.props.name} and I am {this.props.age} old!</p>
                     <p>{this.props.children}</p>
-                    <input type="text" onChange={this.props.changed} value={this.props.name}/>
+                    <input ref={this.inputElement}
+                           type="text"
+                           onChange={this.props.changed}
+                           value={this.props.name}/>
                 </div>
                 <div> Another DIV</div>
             </React.Fragment>

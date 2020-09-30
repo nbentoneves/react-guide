@@ -5,6 +5,7 @@ import Cockpit from "../components/Cockpit/Cockpit";
 import LifeCycle from "../components/LifeCycles/LifeCycle";
 import withClass from "../hoc/withClass";
 import Aux from "../hoc/Aux";
+import AuthContext from '../context/auth-context';
 
 /**
  * 38. Manage information inside component you should use state, changing state the react will rerender the DOM
@@ -16,7 +17,7 @@ import Aux from "../hoc/Aux";
  * ---
  * 54. You can use a clean way to use conditions for dynamic content
  */
-const app = props => {
+const app = (props) => {
 
     const [persons, setPersons] = useState([
         {id: 1, name: 'Nuno', age: "sd"},
@@ -31,6 +32,8 @@ const app = props => {
     const [showCockpick, setShowCockpick] = useState(true)
 
     const [counter, setCounter] = useState(0)
+
+    const [authentication, setAuthentication] = useState(false)
 
     /**
      * 46. A why to passing method references between components
@@ -73,6 +76,10 @@ const app = props => {
         setShowPersons(!showPersons)
     }
 
+    const loginHandler = () => {
+        setAuthentication(true);
+    }
+
     let personsContent = null;
 
     // 54. Clean way to handling why dynamic content
@@ -80,7 +87,8 @@ const app = props => {
         personsContent = <Persons
             persons={persons}
             clicked={deletePersonHandler}
-            changed={switchNameHandler}/>
+            changed={switchNameHandler}
+            isAuthentication={authentication}/>
     }
 
     return (
@@ -90,11 +98,16 @@ const app = props => {
                 setShowCockpick(!setShowCockpick)
             }}>Remove Cockpick
             </button>
-            {showCockpick ? <Cockpit
-                showPersons={showPersons}
-                clicked={togglePersonHandler}
-                title="Complete Guide React"/> : null}
-            {personsContent}
+            <AuthContext.Provider value={{
+                authentication: authentication,
+                login: loginHandler
+            }}>
+                {showCockpick ? <Cockpit
+                    showPersons={showPersons}
+                    clicked={togglePersonHandler}
+                    title="Complete Guide React"/> : null}
+                {personsContent}
+            </AuthContext.Provider>
             <h1>LifeCycle Example</h1>
             <LifeCycle title="This is a title"/>
         </Aux>
